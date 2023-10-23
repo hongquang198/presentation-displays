@@ -9,6 +9,8 @@ import 'package:presentation_displays/secondary_display.dart';
 const _listDisplay = "listDisplay";
 const _showPresentation = "showPresentation";
 const _transferDataToPresentation = "transferDataToPresentation";
+const _dismissPresentation = "dismissPresentation";
+const _resumePresentation = "resumePresentation";
 
 /// Display category: secondary display.
 /// <p>
@@ -175,4 +177,13 @@ class DisplayManager {
     return _displayMethodChannel?.invokeMethod<bool?>(
         _transferDataToPresentation, arguments);
   }
+
+  Future<bool?>? dismissPresentation() {
+    return _displayMethodChannel?.invokeMethod<bool?>(_dismissPresentation);
+  }  
+  
+  Future<bool?>? resumePresentation() {
+    return _displayMethodChannel?.invokeMethod<bool?>(_resumePresentation);
+  }
+
 }

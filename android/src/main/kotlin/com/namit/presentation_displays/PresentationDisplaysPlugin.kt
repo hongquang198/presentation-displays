@@ -26,6 +26,7 @@ class PresentationDisplaysPlugin : FlutterPlugin, ActivityAware, MethodChannel.M
     private var flutterEngineChannel: MethodChannel? = null
     private var displayManager: DisplayManager? = null
     private var context: Context? = null
+    private var currentPresentation: PresentationDisplay? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.flutterEngine.dartExecutor, viewTypeId)
@@ -68,10 +69,10 @@ class PresentationDisplaysPlugin : FlutterPlugin, ActivityAware, MethodChannel.M
                                 it.dartExecutor.binaryMessenger,
                                 "${viewTypeId}_engine"
                             )
-                            val presentation =
+                            currentPresentation =
                                 context?.let { it1 -> PresentationDisplay(it1, tag, display) }
-                            Log.i(TAG, "presentation: $presentation")
-                            presentation?.show()
+                            Log.i(TAG, "presentation: $currentPresentation")
+                            currentPresentation?.show()
                             result.success(true)
                         } ?: result.error("404", "Can't find FlutterEngine", null)
                     } else {
@@ -102,6 +103,22 @@ class PresentationDisplaysPlugin : FlutterPlugin, ActivityAware, MethodChannel.M
             "transferDataToPresentation" -> {
                 try {
                     flutterEngineChannel?.invokeMethod("DataTransfer", call.arguments)
+                    result.success(true)
+                } catch (e: Exception) {
+                    result.success(false)
+                }
+            }
+            "dismissPresentation" -> {
+                try {
+                    currentPresentation?.dismiss()
+                    result.success(true)
+                } catch (e: Exception) {
+                    result.success(false)
+                }
+            }
+            "resumePresentation" -> {
+                try {
+                    currentPresentation?.show()
                     result.success(true)
                 } catch (e: Exception) {
                     result.success(false)
